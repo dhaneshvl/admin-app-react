@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Drawer, Form, Input, Row, Col, message, Modal ,Select} from 'antd';
+import { Space, Table, Button, Drawer, Form, Input, Row, Col, message, Modal, Select } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -25,48 +25,34 @@ const ProductManagement = () => {
     fetchCategories();
   }, []);
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:9090/api/v1/product');
-  //     const result = await response.json();
-
-  //     if (result.success) {
-  //       setProductData(result.data);
-  //     } else {
-  //       setError(result.message);
-  //     }
-  //   } catch (error) {
-  //     setError('Error fetching data. Please try again later.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchData = async () => {
     try {
       const response = await fetch('http://localhost:9090/api/v1/product');
       const result = await response.json();
 
+      console.log('API Response:', result); // Log API response
+
       if (result.success) {
-        // Extract categoryName from the nested category object
         const processedData = result.data.map((product) => ({
           ...product,
           categoryName: product.category.categoryName,
         }));
+
+        console.log('Processed Data:', processedData); // Log processed data
 
         setProductData(processedData);
       } else {
         setError(result.message);
       }
     } catch (error) {
+      console.error('Error fetching data:', error);
       setError('Error fetching data. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-   // Fetch categories from the API
-   const fetchCategories = async () => {
+  const fetchCategories = async () => {
     try {
       const response = await fetch('http://localhost:9090/api/v1/category');
       const result = await response.json();
@@ -101,10 +87,8 @@ const ProductManagement = () => {
           let response;
 
           if (selectedProduct === null) {
-            // If selectedProduct is null, it's a create operation (POST request)
             response = await axios.post('http://localhost:9090/api/v1/product/create', values);
           } else {
-            // If selectedProduct is not null, it's an edit operation (PUT request)
             response = await axios.put(`http://localhost:9090/api/v1/product/${selectedProduct.id}`, values);
           }
 
@@ -119,11 +103,9 @@ const ProductManagement = () => {
           }
         } catch (error) {
           if (error.response) {
-            // Server responded with an error status (4xx or 5xx)
             console.error('Server error:', error.response.status, error.response.data);
             toast.error(error.response.data.message, { position: 'bottom-left' });
           } else {
-            // Request was made but no response received
             console.error('Request error:', error.request);
             toast.error('No response received from the server.', { position: 'bottom-left' });
           }
@@ -132,7 +114,6 @@ const ProductManagement = () => {
         }
       })
       .catch((error) => {
-        // Handle validation errors or other form errors here
         console.error('Form validation errors:', error.errors);
         toast.error('Error submitting data. Please fix the validation errors and try again.', { position: 'bottom-left' });
         setLoading(false);
@@ -140,34 +121,28 @@ const ProductManagement = () => {
   };
 
   const handleEdit = async (record) => {
-    // Set the selected product for editing and show the Drawer
     setSelectedProduct(record);
     showDrawer();
 
-    // Fetch the details of the selected product and update the form fields
-    const productId = record.id; // Assuming the id property exists in the productData object
+    const productId = record.id;
     try {
       console.log('Fetching product details for productId:', productId);
       await fetchProductDetails(productId);
     } catch (error) {
       console.error('Error fetching product details:', error);
       toast.error('Error fetching product details. Please try again later.', { position: 'bottom-left' });
-    } finally {
-      // setLoading(false); // Uncomment this line if you need to set loading to false here
     }
   };
 
   const fetchProductDetails = async (productId) => {
     try {
       const response = await axios.get(`http://localhost:9090/api/v1/product/${productId}`);
-      const productDetails = response.data.data; // Access the 'data' property
+      const productDetails = response.data.data;
 
-      console.log('product-details:', productDetails);
+      console.log('Product Details:', productDetails);
 
-      // Update the form fields with the details of the selected product
       form.setFieldsValue({
         productName: productDetails.productName,
-        // categoryId: productDetails.categoryId,
         categoryId: productDetails.category.id,
         price: productDetails.price,
         discount: productDetails.discount,
@@ -181,24 +156,24 @@ const ProductManagement = () => {
   const handleDelete = (record) => {
     if ('id' in record && record.id !== null) {
       setDeleteProductId(record.id);
-      showDeleteConfirm(record.productName, record.id); // Pass the record.id to showDeleteConfirm
+      showDeleteConfirm(record.productName, record.id);
     } else {
       console.error('Invalid record object or missing id property:', record);
     }
   };
 
-  const showDeleteConfirm = (productName, productId) => { // Receive productId as a parameter
+  const showDeleteConfirm = (productName, productId) => {
     Modal.confirm({
       title: `Confirm Delete`,
       content: `Are you sure you want to delete ${productName}?`,
-      onOk: () => handleConfirmDelete(productId), // Pass productId to handleConfirmDelete
+      onOk: () => handleConfirmDelete(productId),
       onCancel: () => setDeleteProductId(null),
       okText: 'Yes',
       cancelText: 'No',
     });
   };
 
-  const handleConfirmDelete = async (productId) => { // Receive productId as a parameter
+  const handleConfirmDelete = async (productId) => {
     try {
       const response = await axios.delete(`http://localhost:9090/api/v1/product/${productId}`);
       if (response.data.success) {
@@ -223,7 +198,7 @@ const ProductManagement = () => {
     },
     {
       title: 'Category',
-      dataIndex: 'categoryName', 
+      dataIndex: 'categoryName',
       key: 'categoryName',
     },
     {
@@ -253,9 +228,11 @@ const ProductManagement = () => {
     },
   ];
 
+  console.log('Type of productData:', typeof productData); // Log the type of productData
+
   return (
     <>
-      <h1>Product Management</h1>
+     <h1 style={{marginBlockStart:-20}}>Product Management</h1>
 
       <Button
         type="primary"
@@ -270,7 +247,7 @@ const ProductManagement = () => {
         title={selectedProduct != null ? 'Edit Product' : 'Create a new product'}
         width={720}
         onClose={onClose}
-        visible={open}
+        open={open}
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
@@ -296,9 +273,8 @@ const ProductManagement = () => {
                 <Input placeholder="Please enter product name" />
               </Form.Item>
             </Col>
-            
+
             <Col span={12}>
-              {/* Use the Select component for category selection */}
               <Form.Item
                 name="categoryId"
                 label="Category"
@@ -309,26 +285,21 @@ const ProductManagement = () => {
                   },
                 ]}
               >
-                {/* <Select placeholder="Please select category">
-                  {/* Map over categories and create Select options */}
+                <Select placeholder="Please select category">
                   {/* {categories.map((category) => (
-                    <Option key={category.id} value={category.categoryName}>
+                    <Option key={category.id} value={category.id}>
                       {category.categoryName}
                     </Option>
-                  ))}
-                </Select>  */}
-
-                <Select placeholder="Please select category">
-                  {/* Map over categories and create Select options */}
-                  {categories.map((category) => (
+                  ))} */}
+                  {Array.isArray(categories) && categories.map((category) => (
                     <Option key={category.id} value={category.id}>
                       {category.categoryName}
                     </Option>
                   ))}
+
                 </Select>
               </Form.Item>
             </Col>
-
           </Row>
           <Row gutter={16}>
             <Col span={12}>
@@ -363,7 +334,8 @@ const ProductManagement = () => {
         </Form>
       </Drawer>
 
-      <Table columns={columns} dataSource={productData} />
+      <Table columns={columns} dataSource={Array.isArray(productData) ? productData : []} />
+
       <ToastContainer />
     </>
   );

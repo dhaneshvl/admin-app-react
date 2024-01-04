@@ -217,7 +217,7 @@ const UserManagement = () => {
 
   return (
     <>
-      <h1>User Management</h1>
+      <h1 style={{marginBlockStart:-20}}>User Management</h1>
 
       <Button
         type="primary"
@@ -232,7 +232,7 @@ const UserManagement = () => {
         title={selectedUser != null ? 'Edit User' : 'Create a new user'}
         width={720}
         onClose={onClose}
-        visible={open}
+        open={open} 
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>

@@ -223,7 +223,7 @@ const Store = () => {
 
   return (
     <>
-      <h1>Store Management</h1>
+      <h1 style={{marginBlockStart:-20}}>Store Management</h1>
 
       <Button
         type="primary"
@@ -238,7 +238,7 @@ const Store = () => {
         title={selectedStore!=null? 'Edit Store' : 'Create a new store'}
         width={720}
         onClose={onClose}
-        visible={open}
+        open={open} 
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
@@ -329,7 +329,9 @@ const Store = () => {
         </Form>
       </Drawer>
 
-      <Table columns={columns} dataSource={storeData} />
+      {/* <Table columns={columns} dataSource={storeData} /> */}
+      <Table columns={columns} dataSource={Array.isArray(storeData) ? storeData : []} />
+
       <ToastContainer />
     </>
   );

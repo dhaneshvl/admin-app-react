@@ -208,7 +208,7 @@ const CategoryManagement = () => {
 
   return (
     <>
-      <h1>Category Management</h1>
+      <h1 style={{marginBlockStart:-20}}>Category Management</h1>
 
       <Button
         type="primary"
@@ -223,7 +223,7 @@ const CategoryManagement = () => {
         title={selectedCategory !== null ? 'Edit Category' : 'Create a new category'}
         width={720}
         onClose={onClose}
-        visible={open}
+        open={open}  
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
@@ -246,7 +246,7 @@ const CategoryManagement = () => {
                   },
                 ]}
               >
-                <Input placeholder="Please enter category name" />
+                <Input placeholder="Please enter category name" allowClear/>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -260,7 +260,7 @@ const CategoryManagement = () => {
                   },
                 ]}
               >
-                <Input.TextArea placeholder="Please enter description" />
+                <Input.TextArea placeholder="Please enter description" allowClear/>
               </Form.Item>
             </Col>
           </Row>
@@ -276,7 +276,7 @@ const CategoryManagement = () => {
                   },
                 ]}
               >
-                <Input placeholder="Please enter GST" />
+                <Input placeholder="Please enter GST" allowClear/>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -290,7 +290,7 @@ const CategoryManagement = () => {
                   },
                 ]}
               >
-                <Input placeholder="Please enter SGST" />
+                <Input placeholder="Please enter SGST" allowClear/>
               </Form.Item>
             </Col>
           </Row>
@@ -306,7 +306,7 @@ const CategoryManagement = () => {
                   },
                 ]}
               >
-                <Select placeholder="Please select quantity unit">
+                <Select placeholder="Please select quantity unit" >
                   <Select.Option value="Pcs">Pcs</Select.Option>
                   <Select.Option value="Ltr">Ltr</Select.Option>
                   <Select.Option value="Kg">Kg</Select.Option>
@@ -318,7 +318,9 @@ const CategoryManagement = () => {
         </Form>
       </Drawer>
 
-      <Table columns={columns} dataSource={categoryData} />
+      {/* <Table columns={columns} dataSource={categoryData} /> */}
+      <Table columns={columns} dataSource={Array.isArray(categoryData) ? categoryData : []} />
+
       <ToastContainer />
     </>
   );
