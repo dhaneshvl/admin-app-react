@@ -34,7 +34,7 @@ const PurchaseEntry = () => {
     const fetchSuppliers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9090/api/v1/category"
+          "http://localhost:9090/api/v1/supplier"
         );
         setSuppliers(response.data.data);
       } catch (error) {
@@ -83,6 +83,7 @@ const PurchaseEntry = () => {
 
   const closeDrawer = () => {
     form.resetFields(); // Reset the entire form
+    setSelectedSupplier(null);
     setIsDrawerVisible(false);
   };
 
@@ -175,7 +176,7 @@ const PurchaseEntry = () => {
               >
                 <Select
                   showSearch
-                  placeholder="Select a supplier"
+                  placeholder="Select a supplier" allowClear
                   optionFilterProp="children"
                   onChange={handleSupplierChange}
                   filterOption={(input, option) =>
@@ -186,7 +187,7 @@ const PurchaseEntry = () => {
                 >
                   {suppliers.map((supplier) => (
                     <Option key={supplier.id} value={supplier.id}>
-                      {supplier.categoryName}
+                      {supplier.supplierName}
                     </Option>
                   ))}
                 </Select>
@@ -203,7 +204,7 @@ const PurchaseEntry = () => {
                 ]}
               >
                 <Input
-                  placeholder="Purchase Note"
+                  placeholder="Purchase Note" allowClear
                   onChange={(e) => setPurchaseNote(e.target.value)}
                 />
               </Form.Item>
@@ -235,7 +236,7 @@ const PurchaseEntry = () => {
                       {/* <Tooltip title="Product" key="product-tooltip"> */}
                         <Select
                           showSearch
-                          placeholder="Select a product"
+                          placeholder="Select a product" allowClear
                           optionFilterProp="children"
                         >
                           {products.map((product) => (
@@ -258,7 +259,7 @@ const PurchaseEntry = () => {
                       ]}
                     >
                       {/* <Tooltip title="Quantity" key="quantity-tooltip"> */}
-                        <Input placeholder="Quantity" />
+                        <Input placeholder="Quantity" allowClear />
                       {/* </Tooltip> */}
                     </Form.Item>
                     <Form.Item
@@ -272,7 +273,7 @@ const PurchaseEntry = () => {
                       ]}
                     >
                       {/* <Tooltip title="Base Price" key="base-price-tooltip"> */}
-                        <Input placeholder="Base Price" />
+                        <Input placeholder="Base Price"  allowClear/>
                       {/* </Tooltip> */}
                     </Form.Item>
                     <Form.Item
@@ -286,7 +287,7 @@ const PurchaseEntry = () => {
                       ]}
                     >
                       {/* <Tooltip title="Discount" key="discount-tooltip"> */}
-                        <Input placeholder="Discount (%)" />
+                        <Input placeholder="Discount (%)" allowClear />
                       {/* </Tooltip> */}
                     </Form.Item>
                     <MinusCircleOutlined onClick={() => remove(name)} />

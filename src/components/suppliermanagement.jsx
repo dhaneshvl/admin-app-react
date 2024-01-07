@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Drawer, Form, Input, Row, Col, Select, message, Modal } from 'antd';
+import { Space, Table, Button, Drawer, Form, Input, Row, Col, message, Modal, Select } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
-import './css/store.css';
-
-const { Option } = Select;
-
-const Store = () => {
+const SupplierManagement = () => {
   const [open, setOpen] = useState(false);
-  const [storeData, setStoreData] = useState([]);
-  const [selectedStore, setSelectedStore] = useState(null); // New state to store selected store for editing
+  const [supplierData, setSupplierData] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
-  const [deleteStoreId, setDeleteStoreId] = useState(null);
+  const [deleteSupplierId, setDeleteSupplierId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -25,11 +21,11 @@ const Store = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/store');
+      const response = await fetch('http://localhost:9090/api/v1/supplier');
       const result = await response.json();
 
       if (result.success) {
-        setStoreData(result.data);
+        setSupplierData(result.data);
       } else {
         setError(result.message);
       }
@@ -47,7 +43,7 @@ const Store = () => {
 
   const onClose = () => {
     setOpen(false);
-    setSelectedStore(null); // just testing
+    setSelectedSupplier(null);
   };
 
   const handleFormSubmit = () => {
@@ -59,12 +55,12 @@ const Store = () => {
         try {
           let response;
 
-          if (selectedStore === null) {
-            // If selectedStore is null, it's a create operation (POST request)
-            response = await axios.post('http://localhost:9090/api/v1/store/onboard', values);
+          if (selectedSupplier === null) {
+            // If selectedSupplier is null, it's a create operation (POST request)
+            response = await axios.post('http://localhost:9090/api/v1/supplier/create', values);
           } else {
-            // If selectedStore is not null, it's an edit operation (PUT request)
-            response = await axios.put(`http://localhost:9090/api/v1/store/${selectedStore.id}`, values);
+            // If selectedSupplier is not null, it's an edit operation (PUT request)
+            response = await axios.put(`http://localhost:9090/api/v1/supplier/${selectedSupplier.id}`, values);
           }
 
           const responseData = response.data;
@@ -98,72 +94,60 @@ const Store = () => {
       });
   };
 
-
   const handleEdit = async (record) => {
-    // Set the selected store for editing and show the Drawer
-    setSelectedStore(record);
+    // Set the selected supplier for editing and show the Drawer
+    setSelectedSupplier(record);
     showDrawer();
 
-    // Fetch the details of the selected store and update the form fields
-    const storeId = record.id; // Assuming the id property exists in the storeData object
+    // Fetch the details of the selected supplier and update the form fields
+    const supplierId = record.id; // Assuming the id property exists in the supplierData object
     try {
-      console.log('Fetching store details for storeId:', storeId);
-      await fetchStoreDetails(storeId);
+      await fetchSupplierDetails(supplierId);
     } catch (error) {
-      console.error('Error fetching store details:', error);
-      toast.error('Error fetching store details. Please try again later.', { position: 'bottom-left' });
-    } finally {
-      // setLoading(false); // Uncomment this line if you need to set loading to false here
+      // Handle errors
     }
   };
 
-
-
-  const fetchStoreDetails = async (storeId) => {
+  const fetchSupplierDetails = async (supplierId) => {
     try {
-      const response = await axios.get(`http://localhost:9090/api/v1/store/${storeId}`);
-      const storeDetails = response.data.data; // Access the 'data' property
+      const response = await axios.get(`http://localhost:9090/api/v1/supplier/${supplierId}`);
+      const supplierDetails = response.data.data;
 
-      console.log('store-details:', storeDetails);
-
-      // Update the form fields with the details of the selected store
+      // Update the form fields with the details of the selected supplier
       form.setFieldsValue({
-        name: storeDetails.name,
-        proprietorName: storeDetails.proprietorName,
-        location: storeDetails.location,
-        pincode: storeDetails.pincode,
-        phone: storeDetails.phone,
+        supplierName: supplierDetails.supplierName,
+        address: supplierDetails.address,
+        gstNo: supplierDetails.gstNo,
+        phone: supplierDetails.phone,
       });
     } catch (error) {
-      console.error('Error fetching store details:', error);
-      toast.error('Error fetching store details. Please try again later.', { position: 'bottom-left' });
+      // Handle errors
     }
   };
-
 
   const handleDelete = (record) => {
     if ('id' in record && record.id !== null) {
-      setDeleteStoreId(record.id);
-      showDeleteConfirm(record.name, record.id); // Pass the record.id to showDeleteConfirm
+      setDeleteSupplierId(record.id);
+      showDeleteConfirm(record.supplierName, record.id);
     } else {
       console.error('Invalid record object or missing id property:', record);
     }
   };
 
-  const showDeleteConfirm = (storeName, storeId) => { // Receive storeId as a parameter
+  const showDeleteConfirm = (supplierName, supplierId) => {
     Modal.confirm({
       title: `Confirm Delete`,
-      content: `Are you sure you want to delete ${storeName}?`,
-      onOk: () => handleConfirmDelete(storeId), // Pass storeId to handleConfirmDelete
-      onCancel: () => setDeleteStoreId(null),
+      content: `Are you sure you want to delete ${supplierName}?`,
+      onOk: () => handleConfirmDelete(supplierId),
+      onCancel: () => setDeleteSupplierId(null),
       okText: 'Yes',
       cancelText: 'No',
     });
   };
 
-  const handleConfirmDelete = async (storeId) => { // Receive storeId as a parameter
+  const handleConfirmDelete = async (supplierId) => {
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/store/${storeId}`);
+      const response = await axios.delete(`http://localhost:9090/api/v1/supplier/${supplierId}`);
       if (response.data.success) {
         toast.success(response.data.message, { position: 'bottom-left' });
         fetchData();
@@ -171,43 +155,38 @@ const Store = () => {
         toast.error(response.data.message, { position: 'bottom-left' });
       }
     } catch (error) {
-      toast.error('Error deleting store. Please try again later.', { position: 'bottom-left' });
+      // Handle errors
     } finally {
-      setDeleteStoreId(null);
+      setDeleteSupplierId(null);
     }
   };
 
   const columns = [
     {
-      title: 'Store Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Supplier Name',
+      dataIndex: 'supplierName',
+      key: 'supplierName',
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Proprietor Name',
-      dataIndex: 'proprietorName',
-      key: 'proprietorName',
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
     },
     {
-      title: 'Added Date',
-      dataIndex: 'addedDate',
-      key: 'addedDate',
-    },
-    {
-      title: 'Location',
-      dataIndex: 'location',
-      key: 'location',
-    },
-    {
-      title: 'Pincode',
-      dataIndex: 'pincode',
-      key: 'pincode',
+      title: 'GST Number',
+      dataIndex: 'gstNo',
+      key: 'gstNo',
     },
     {
       title: 'Phone',
       dataIndex: 'phone',
       key: 'phone',
+    },
+    {
+      title: 'Added Date',
+      dataIndex: 'addedDate',
+      key: 'addedDate',
     },
     {
       title: 'Action',
@@ -223,7 +202,7 @@ const Store = () => {
 
   return (
     <>
-      <h1 style={{marginBlockStart:-20}}>Store Management</h1>
+      <h1 style={{marginBlockStart:-20}}>Supplier Management</h1>
 
       <Button
         type="primary"
@@ -235,10 +214,10 @@ const Store = () => {
       </Button>
 
       <Drawer
-        title={selectedStore!=null? 'Edit Store' : 'Create a new store'}
+        title={selectedSupplier !== null ? 'Edit Supplier' : 'Create a new Supplier'}
         width={720}
         onClose={onClose}
-        open={open} 
+        open={open}  
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
@@ -252,68 +231,52 @@ const Store = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="name"
-                label="Store Name"
+                name="supplierName"
+                label="Supplier Name"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the store name',
+                    message: 'Please enter the supplier name',
                   },
                 ]}
               >
-                <Input placeholder="Please enter store name" />
+                <Input placeholder="Please enter supplier name" allowClear/>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="proprietorName"
-                label="Proprietor Name"
+                name="address"
+                label="Address"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the proprietor name',
+                    message: 'Please enter the address',
                   },
                 ]}
               >
-                <Input placeholder="Please enter proprietor name" />
+                <Input.TextArea placeholder="Please enter address" allowClear/>
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="location"
-                label="Location"
+                name="gstNo"
+                label="GST Number"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the location',
+                    message: 'Please enter the GST Number',
                   },
                 ]}
               >
-                <Input placeholder="Please enter location" />
+                <Input placeholder="Please enter GST Number" allowClear/>
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                name="pincode"
-                label="Pincode"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter the pincode',
-                  },
-                ]}
-              >
-                <Input placeholder="Please enter pincode" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 name="phone"
-                label="Phone"
+                label="Phone Number"
                 rules={[
                   {
                     required: true,
@@ -321,20 +284,19 @@ const Store = () => {
                   },
                 ]}
               >
-                <Input placeholder="Please enter phone number" />
+                <Input placeholder="Please enter phone number" allowClear/>
               </Form.Item>
             </Col>
-            {/* Add other form fields similarly */}
           </Row>
         </Form>
       </Drawer>
 
-      {/* <Table columns={columns} dataSource={storeData} /> */}
-      <Table columns={columns} dataSource={Array.isArray(storeData) ? storeData : []} />
+      {/* <Table columns={columns} dataSource={supplierData} /> */}
+      <Table columns={columns} dataSource={Array.isArray(supplierData) ? supplierData : []} />
 
       <ToastContainer />
     </>
   );
 };
 
-export default Store;
+export default SupplierManagement;

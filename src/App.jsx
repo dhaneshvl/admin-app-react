@@ -12,10 +12,10 @@ import {
 } from "@ant-design/icons";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Dashboard from "./components/dashboard";
-import Store from "./components/store";
+import Vendor from "./components/vendor";
 import ProductManagement from "./components/productmanagement";
 import UserManagement from "./components/usermanagement";
-import CategoryManagement from "./components/categorymanagement";
+import SupplierManagement from "./components/suppliermanagement";
 import Login from "./components/Login";
 import PageNotFound from "./components/PageNotFound";
 import PurchaseEntry from "./components/PurchaseEntry";
@@ -43,10 +43,10 @@ const AppLayout = ({ children }) => {
             <Link to="/user">User</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<ShopOutlined />}>
-            <Link to="/store">Store</Link>
+            <Link to="/vendor">Vendor</Link>
           </Menu.Item>
           <Menu.Item key="4" icon={<ContainerOutlined />}>
-            <Link to="/category">Category</Link>
+            <Link to="/supplier">Supplier</Link>
           </Menu.Item>
           <Menu.Item key="5" icon={<ShoppingCartOutlined />}>
             <Link to="/product">Product</Link>
@@ -137,18 +137,18 @@ const App = () => {
           }
         />
         <Route
-          path="/store"
+          path="/vendor"
           element={
             <AppLayout>
-              <Store />
+              <Vendor />
             </AppLayout>
           }
         />
         <Route
-          path="/category"
+          path="/supplier"
           element={
             <AppLayout>
-              <CategoryManagement />
+              <SupplierManagement />
             </AppLayout>
           }
         />

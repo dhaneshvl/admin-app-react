@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Drawer, Form, Input, Row, Col, message, Modal, Select } from 'antd';
+import { Space, Table, Button, Drawer, Form, Input, Row, Col, Select, message, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
-const CategoryManagement = () => {
+import './css/vendor.css';
+
+const { Option } = Select;
+
+const Vendor = () => {
   const [open, setOpen] = useState(false);
-  const [categoryData, setCategoryData] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [vendorData, setVendorData] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState(null); // New state to vendor selected vendor for editing
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
-  const [deleteCategoryId, setDeleteCategoryId] = useState(null);
+  const [deleteVendorId, setDeleteVendorId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -21,11 +25,11 @@ const CategoryManagement = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/category');
+      const response = await fetch('http://localhost:9090/api/v1/vendor');
       const result = await response.json();
 
       if (result.success) {
-        setCategoryData(result.data);
+        setVendorData(result.data);
       } else {
         setError(result.message);
       }
@@ -43,7 +47,7 @@ const CategoryManagement = () => {
 
   const onClose = () => {
     setOpen(false);
-    setSelectedCategory(null);
+    setSelectedVendor(null); // just testing
   };
 
   const handleFormSubmit = () => {
@@ -55,12 +59,12 @@ const CategoryManagement = () => {
         try {
           let response;
 
-          if (selectedCategory === null) {
-            // If selectedCategory is null, it's a create operation (POST request)
-            response = await axios.post('http://localhost:9090/api/v1/category/create', values);
+          if (selectedVendor === null) {
+            // If selectedVendor is null, it's a create operation (POST request)
+            response = await axios.post('http://localhost:9090/api/v1/vendor/onboard', values);
           } else {
-            // If selectedCategory is not null, it's an edit operation (PUT request)
-            response = await axios.put(`http://localhost:9090/api/v1/category/${selectedCategory.id}`, values);
+            // If selectedStore is not null, it's an edit operation (PUT request)
+            response = await axios.put(`http://localhost:9090/api/v1/vendor/${selectedVendor.id}`, values);
           }
 
           const responseData = response.data;
@@ -94,61 +98,73 @@ const CategoryManagement = () => {
       });
   };
 
+
   const handleEdit = async (record) => {
-    // Set the selected category for editing and show the Drawer
-    setSelectedCategory(record);
+    // Set the selected vendor for editing and show the Drawer
+    setSelectedVendor(record);
     showDrawer();
 
-    // Fetch the details of the selected category and update the form fields
-    const categoryId = record.id; // Assuming the id property exists in the categoryData object
+    // Fetch the details of the selected store and update the form fields
+    const vendorId = record.id; // Assuming the id property exists in the storeData object
     try {
-      await fetchCategoryDetails(categoryId);
+      console.log('Fetching vendor details for vendorId:', vendorId);
+      await fetchVendorDetails(vendorId);
     } catch (error) {
-      // Handle errors
+      console.error('Error fetching vendor details:', error);
+      toast.error('Error fetching vendor details. Please try again later.', { position: 'bottom-left' });
+    } finally {
+      // setLoading(false); // Uncomment this line if you need to set loading to false here
     }
   };
 
-  const fetchCategoryDetails = async (categoryId) => {
-    try {
-      const response = await axios.get(`http://localhost:9090/api/v1/category/${categoryId}`);
-      const categoryDetails = response.data.data;
 
-      // Update the form fields with the details of the selected category
+
+  const fetchVendorDetails = async (vendorId) => {
+    try {
+      const response = await axios.get(`http://localhost:9090/api/v1/vendor/${vendorId}`);
+      const vendorDetails = response.data.data; // Access the 'data' property
+
+      console.log('vendor-details:', vendorDetails);
+
+      // Update the form fields with the details of the selected vendor
       form.setFieldsValue({
-        categoryName: categoryDetails.categoryName,
-        description: categoryDetails.description,
-        gst: categoryDetails.gst,
-        sgst: categoryDetails.sgst,
-        quantity: categoryDetails.quantity,
+        name: vendorDetails.name,
+        proprietorName: vendorDetails.proprietorName,
+        gstNo:vendorDetails.gstNo,
+        address: vendorDetails.address,
+        pincode: vendorDetails.pincode,
+        phone: vendorDetails.phone,
       });
     } catch (error) {
-      // Handle errors
+      console.error('Error fetching vendor details:', error);
+      toast.error('Error fetching vendor details. Please try again later.', { position: 'bottom-left' });
     }
   };
+
 
   const handleDelete = (record) => {
     if ('id' in record && record.id !== null) {
-      setDeleteCategoryId(record.id);
-      showDeleteConfirm(record.categoryName, record.id);
+      setDeleteVendorId(record.id);
+      showDeleteConfirm(record.name, record.id); // Pass the record.id to showDeleteConfirm
     } else {
       console.error('Invalid record object or missing id property:', record);
     }
   };
 
-  const showDeleteConfirm = (categoryName, categoryId) => {
+  const showDeleteConfirm = (vendorName, vendorId) => { // Receive storeId as a parameter
     Modal.confirm({
       title: `Confirm Delete`,
-      content: `Are you sure you want to delete ${categoryName}?`,
-      onOk: () => handleConfirmDelete(categoryId),
-      onCancel: () => setDeleteCategoryId(null),
+      content: `Are you sure you want to delete ${vendorName}?`,
+      onOk: () => handleConfirmDelete(vendorId), // Pass vendorId to handleConfirmDelete
+      onCancel: () => setDeleteVendorId(null),
       okText: 'Yes',
       cancelText: 'No',
     });
   };
 
-  const handleConfirmDelete = async (categoryId) => {
+  const handleConfirmDelete = async (vendorId) => { // Receive vendorId as a parameter
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/category/${categoryId}`);
+      const response = await axios.delete(`http://localhost:9090/api/v1/vendor/${vendorId}`);
       if (response.data.success) {
         toast.success(response.data.message, { position: 'bottom-left' });
         fetchData();
@@ -156,43 +172,48 @@ const CategoryManagement = () => {
         toast.error(response.data.message, { position: 'bottom-left' });
       }
     } catch (error) {
-      // Handle errors
+      toast.error('Error deleting vendor. Please try again later.', { position: 'bottom-left' });
     } finally {
-      setDeleteCategoryId(null);
+      setDeleteVendorId(null);
     }
   };
 
   const columns = [
     {
-      title: 'Category Name',
-      dataIndex: 'categoryName',
-      key: 'categoryName',
+      title: 'Vendor Name',
+      dataIndex: 'name',
+      key: 'name',
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: 'GST (%)',
-      dataIndex: 'gst',
-      key: 'gst',
-    },
-    {
-      title: 'SGST (%)',
-      dataIndex: 'sgst',
-      key: 'sgst',
-    },
-    {
-      title: 'Quantity',
-      dataIndex: 'quantity',
-      key: 'quantity',
+      title: 'Proprietor Name',
+      dataIndex: 'proprietorName',
+      key: 'proprietorName',
     },
     {
       title: 'Added Date',
       dataIndex: 'addedDate',
       key: 'addedDate',
+    },
+    {
+      title: 'GST NO',
+      dataIndex: 'gstNo',
+      key: 'gstBo',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Pincode',
+      dataIndex: 'pincode',
+      key: 'pincode',
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
     },
     {
       title: 'Action',
@@ -208,7 +229,7 @@ const CategoryManagement = () => {
 
   return (
     <>
-      <h1 style={{marginBlockStart:-20}}>Category Management</h1>
+      <h1 style={{marginBlockStart:-20}}>Vendor Management</h1>
 
       <Button
         type="primary"
@@ -220,10 +241,10 @@ const CategoryManagement = () => {
       </Button>
 
       <Drawer
-        title={selectedCategory !== null ? 'Edit Category' : 'Create a new category'}
+        title={selectedVendor!=null? 'Edit Vendor' : 'Create a new vendor'}
         width={720}
         onClose={onClose}
-        open={open}  
+        open={open} 
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
@@ -237,93 +258,103 @@ const CategoryManagement = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="categoryName"
-                label="Category Name"
+                name="name"
+                label="Vendor Name"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the category name',
+                    message: 'Please enter the vendor name',
                   },
                 ]}
               >
-                <Input placeholder="Please enter category name" allowClear/>
+                <Input placeholder="Please enter vendor name" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="description"
-                label="Description"
+                name="proprietorName"
+                label="Proprietor Name"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the description',
+                    message: 'Please enter the proprietor name',
                   },
                 ]}
               >
-                <Input.TextArea placeholder="Please enter description" allowClear/>
+                <Input placeholder="Please enter proprietor name" />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="gst"
-                label="GST (%)"
+                name="address"
+                label="Address"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the GST',
+                    message: 'Please enter the location',
                   },
                 ]}
               >
-                <Input placeholder="Please enter GST" allowClear/>
+                <Input placeholder="Please enter location" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="sgst"
-                label="SGST (%)"
+                name="pincode"
+                label="Pincode"
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the SGST',
+                    message: 'Please enter the pincode',
                   },
                 ]}
               >
-                <Input placeholder="Please enter SGST" allowClear/>
+                <Input placeholder="Please enter pincode" />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="quantity"
-                label="Quantity"
+                name="phone"
+                label="Phone"
                 rules={[
                   {
                     required: true,
-                    message: 'Please select the quantity unit',
+                    message: 'Please enter the phone number',
                   },
                 ]}
               >
-                <Select placeholder="Please select quantity unit" >
-                  <Select.Option value="Pcs">Pcs</Select.Option>
-                  <Select.Option value="Ltr">Ltr</Select.Option>
-                  <Select.Option value="Kg">Kg</Select.Option>
-                  <Select.Option value="Grams">g</Select.Option>
-                </Select>
+                <Input placeholder="Please enter phone number" />
               </Form.Item>
             </Col>
+            <Col span={12}>
+              <Form.Item
+                name="gstNo"
+                label="GST NO"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please enter the GST number',
+                  },
+                ]}
+              >
+                <Input placeholder="Please enter GST number" />
+              </Form.Item>
+            </Col>
+            {/* Add other form fields similarly */}
           </Row>
         </Form>
       </Drawer>
 
-      {/* <Table columns={columns} dataSource={categoryData} /> */}
-      <Table columns={columns} dataSource={Array.isArray(categoryData) ? categoryData : []} />
+      {/* <Table columns={columns} dataSource={storeData} /> */}
+      <Table columns={columns} dataSource={Array.isArray(vendorData) ? vendorData : []} />
 
       <ToastContainer />
     </>
   );
 };
 
-export default CategoryManagement;
+export default Vendor;

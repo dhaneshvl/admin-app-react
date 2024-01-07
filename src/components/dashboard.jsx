@@ -74,7 +74,7 @@ const Dashboard = () => {
       <Row gutter={16}>
         <Col span={12}>
           <Card>
-            <Statistic title="Categories" value={140} formatter={formatter} />
+            <Statistic title="Suppliers" value={140} formatter={formatter} />
           </Card>
         </Col>
         <Col span={12}>

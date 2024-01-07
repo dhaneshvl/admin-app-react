@@ -15,14 +15,14 @@ const ProductManagement = () => {
   const [form] = Form.useForm();
   const { Option } = Select;
   const [deleteProductId, setDeleteProductId] = useState(null);
-  const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    fetchCategories();
+    fetchSuppliers();
   }, []);
 
   const fetchData = async () => {
@@ -35,7 +35,7 @@ const ProductManagement = () => {
       if (result.success) {
         const processedData = result.data.map((product) => ({
           ...product,
-          categoryName: product.category.categoryName,
+          supplierName: product.supplier.supplierName,
         }));
 
         console.log('Processed Data:', processedData); // Log processed data
@@ -52,18 +52,18 @@ const ProductManagement = () => {
     }
   };
 
-  const fetchCategories = async () => {
+  const fetchSuppliers = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/category');
+      const response = await fetch('http://localhost:9090/api/v1/supplier');
       const result = await response.json();
 
       if (result.success) {
-        setCategories(result.data);
+        setSuppliers(result.data);
       } else {
         setError(result.message);
       }
     } catch (error) {
-      setError('Error fetching categories. Please try again later.');
+      setError('Error fetching suppliers. Please try again later.');
     }
   };
 
@@ -143,9 +143,12 @@ const ProductManagement = () => {
 
       form.setFieldsValue({
         productName: productDetails.productName,
-        categoryId: productDetails.category.id,
+        supplierId: productDetails.supplier.id,
         price: productDetails.price,
         discount: productDetails.discount,
+        sgst: productDetails.sgst,
+        cgst: productDetails.cgst,
+        hsnCode: productDetails.hsnCode,
       });
     } catch (error) {
       console.error('Error fetching product details:', error);
@@ -197,9 +200,9 @@ const ProductManagement = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Category',
-      dataIndex: 'categoryName',
-      key: 'categoryName',
+      title: 'Supplier',
+      dataIndex: 'supplierName',
+      key: 'supplierName',
     },
     {
       title: 'Price',
@@ -207,7 +210,7 @@ const ProductManagement = () => {
       key: 'price',
     },
     {
-      title: 'Discount',
+      title: 'Discount (%)',
       dataIndex: 'discount',
       key: 'discount',
     },
@@ -276,24 +279,24 @@ const ProductManagement = () => {
 
             <Col span={12}>
               <Form.Item
-                name="categoryId"
-                label="Category"
+                name="supplierId"
+                label="Supplier"
                 rules={[
                   {
                     required: true,
-                    message: 'Please select the category',
+                    message: 'Please select the supplier',
                   },
                 ]}
               >
-                <Select placeholder="Please select category">
+                <Select placeholder="Please select supplier">
                   {/* {categories.map((category) => (
                     <Option key={category.id} value={category.id}>
                       {category.categoryName}
                     </Option>
                   ))} */}
-                  {Array.isArray(categories) && categories.map((category) => (
-                    <Option key={category.id} value={category.id}>
-                      {category.categoryName}
+                  {Array.isArray(suppliers) && suppliers.map((supplier) => (
+                    <Option key={supplier.id} value={supplier.id}>
+                      {supplier.supplierName}
                     </Option>
                   ))}
 
@@ -319,7 +322,7 @@ const ProductManagement = () => {
             <Col span={12}>
               <Form.Item
                 name="discount"
-                label="Discount"
+                label="Discount (%)"
                 rules={[
                   {
                     required: true,
@@ -330,6 +333,53 @@ const ProductManagement = () => {
                 <Input placeholder="Please enter discount" />
               </Form.Item>
             </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="sgst"
+                label="SGST"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please enter the SGST',
+                  },
+                ]}
+              >
+                <Input placeholder="Please enter SGST" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="cgst"
+                label="CGST (%)"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please enter the CGST',
+                  },
+                ]}
+              >
+                <Input placeholder="Please enter CGST" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="hsnCode"
+                label="HSN Code"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please enter the HSN code',
+                  },
+                ]}
+              >
+                <Input placeholder="Please enter HSN code" />
+              </Form.Item>
+            </Col>
+           
           </Row>
         </Form>
       </Drawer>
