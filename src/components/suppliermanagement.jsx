@@ -1,10 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Drawer, Form, Input, Row, Col, message, Modal, Select } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import {
+  Space,
+  Table,
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Row,
+  Col,
+  Modal,
+} from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const SupplierManagement = () => {
   const [open, setOpen] = useState(false);
@@ -21,7 +35,7 @@ const SupplierManagement = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/supplier');
+      const response = await fetch("http://localhost:9090/api/v1/supplier");
       const result = await response.json();
 
       if (result.success) {
@@ -30,7 +44,7 @@ const SupplierManagement = () => {
         setError(result.message);
       }
     } catch (error) {
-      setError('Error fetching data. Please try again later.');
+      setError("Error fetching data. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -57,30 +71,44 @@ const SupplierManagement = () => {
 
           if (selectedSupplier === null) {
             // If selectedSupplier is null, it's a create operation (POST request)
-            response = await axios.post('http://localhost:9090/api/v1/supplier/create', values);
+            response = await axios.post(
+              "http://localhost:9090/api/v1/supplier/create",
+              values
+            );
           } else {
             // If selectedSupplier is not null, it's an edit operation (PUT request)
-            response = await axios.put(`http://localhost:9090/api/v1/supplier/${selectedSupplier.id}`, values);
+            response = await axios.put(
+              `http://localhost:9090/api/v1/supplier/${selectedSupplier.id}`,
+              values
+            );
           }
 
           const responseData = response.data;
 
           if (responseData.success) {
-            toast.success(responseData.message, { position: 'bottom-left' });
+            toast.success(responseData.message, { position: "bottom-left" });
             fetchData();
             onClose();
           } else {
-            toast.error(responseData.message, { position: 'bottom-left' });
+            toast.error(responseData.message, { position: "bottom-left" });
           }
         } catch (error) {
           if (error.response) {
             // Server responded with an error status (4xx or 5xx)
-            console.error('Server error:', error.response.status, error.response.data);
-            toast.error(error.response.data.message, { position: 'bottom-left' });
+            console.error(
+              "Server error:",
+              error.response.status,
+              error.response.data
+            );
+            toast.error(error.response.data.message, {
+              position: "bottom-left",
+            });
           } else {
             // Request was made but no response received
-            console.error('Request error:', error.request);
-            toast.error('No response received from the server.', { position: 'bottom-left' });
+            console.error("Request error:", error.request);
+            toast.error("No response received from the server.", {
+              position: "bottom-left",
+            });
           }
         } finally {
           setLoading(false);
@@ -88,8 +116,11 @@ const SupplierManagement = () => {
       })
       .catch((error) => {
         // Handle validation errors or other form errors here
-        console.error('Form validation errors:', error.errors);
-        toast.error('Error submitting data. Please fix the validation errors and try again.', { position: 'bottom-left' });
+        console.error("Form validation errors:", error.errors);
+        toast.error(
+          "Error submitting data. Please fix the validation errors and try again.",
+          { position: "bottom-left" }
+        );
         setLoading(false);
       });
   };
@@ -110,7 +141,9 @@ const SupplierManagement = () => {
 
   const fetchSupplierDetails = async (supplierId) => {
     try {
-      const response = await axios.get(`http://localhost:9090/api/v1/supplier/${supplierId}`);
+      const response = await axios.get(
+        `http://localhost:9090/api/v1/supplier/${supplierId}`
+      );
       const supplierDetails = response.data.data;
 
       // Update the form fields with the details of the selected supplier
@@ -126,11 +159,11 @@ const SupplierManagement = () => {
   };
 
   const handleDelete = (record) => {
-    if ('id' in record && record.id !== null) {
+    if ("id" in record && record.id !== null) {
       setDeleteSupplierId(record.id);
       showDeleteConfirm(record.supplierName, record.id);
     } else {
-      console.error('Invalid record object or missing id property:', record);
+      console.error("Invalid record object or missing id property:", record);
     }
   };
 
@@ -140,19 +173,21 @@ const SupplierManagement = () => {
       content: `Are you sure you want to delete ${supplierName}?`,
       onOk: () => handleConfirmDelete(supplierId),
       onCancel: () => setDeleteSupplierId(null),
-      okText: 'Yes',
-      cancelText: 'No',
+      okText: "Yes",
+      cancelText: "No",
     });
   };
 
   const handleConfirmDelete = async (supplierId) => {
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/supplier/${supplierId}`);
+      const response = await axios.delete(
+        `http://localhost:9090/api/v1/supplier/${supplierId}`
+      );
       if (response.data.success) {
-        toast.success(response.data.message, { position: 'bottom-left' });
+        toast.success(response.data.message, { position: "bottom-left" });
         fetchData();
       } else {
-        toast.error(response.data.message, { position: 'bottom-left' });
+        toast.error(response.data.message, { position: "bottom-left" });
       }
     } catch (error) {
       // Handle errors
@@ -163,38 +198,42 @@ const SupplierManagement = () => {
 
   const columns = [
     {
-      title: 'Supplier Name',
-      dataIndex: 'supplierName',
-      key: 'supplierName',
+      title: "Supplier Name",
+      dataIndex: "supplierName",
+      key: "supplierName",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: 'GST Number',
-      dataIndex: 'gstNo',
-      key: 'gstNo',
+      title: "GST Number",
+      dataIndex: "gstNo",
+      key: "gstNo",
     },
     {
-      title: 'Phone',
-      dataIndex: 'phone',
-      key: 'phone',
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
-      title: 'Added Date',
-      dataIndex: 'addedDate',
-      key: 'addedDate',
+      title: "Added Date",
+      dataIndex: "addedDate",
+      key: "addedDate",
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={() => handleEdit(record)}><EditOutlined /> </a>
-          <a onClick={() => handleDelete(record)}><DeleteOutlined /></a>
+          <a onClick={() => handleEdit(record)}>
+            <EditOutlined />{" "}
+          </a>
+          <a onClick={() => handleDelete(record)}>
+            <DeleteOutlined />
+          </a>
         </Space>
       ),
     },
@@ -202,26 +241,33 @@ const SupplierManagement = () => {
 
   return (
     <>
-      <h1 style={{marginBlockStart:-20}}>Supplier Management</h1>
+      <h1 style={{ marginBlockStart: -20 }}>Supplier Management</h1>
 
       <Button
         type="primary"
         icon={<PlusCircleOutlined />}
-        style={{ marginBottom: 16, float: 'right', marginRight: 30 }}
+        style={{ marginBottom: 16, float: "right", marginRight: 30 }}
         onClick={showDrawer}
       >
         Add New
       </Button>
 
       <Drawer
-        title={selectedSupplier !== null ? 'Edit Supplier' : 'Create a new Supplier'}
+        title={
+          selectedSupplier !== null ? "Edit Supplier" : "Create a new Supplier"
+        }
         width={720}
         onClose={onClose}
-        open={open}  
+        open={open}
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
-            <Button key="submit" type="primary" loading={loading} onClick={handleFormSubmit}>
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleFormSubmit}
+            >
               Submit
             </Button>
           </Space>
@@ -236,11 +282,11 @@ const SupplierManagement = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the supplier name',
+                    message: "Please enter the supplier name",
                   },
                 ]}
               >
-                <Input placeholder="Please enter supplier name" allowClear/>
+                <Input placeholder="Please enter supplier name" allowClear />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -250,11 +296,11 @@ const SupplierManagement = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the address',
+                    message: "Please enter the address",
                   },
                 ]}
               >
-                <Input.TextArea placeholder="Please enter address" allowClear/>
+                <Input.TextArea placeholder="Please enter address" allowClear />
               </Form.Item>
             </Col>
           </Row>
@@ -266,11 +312,11 @@ const SupplierManagement = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the GST Number',
+                    message: "Please enter the GST Number",
                   },
                 ]}
               >
-                <Input placeholder="Please enter GST Number" allowClear/>
+                <Input placeholder="Please enter GST Number" allowClear />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -280,11 +326,11 @@ const SupplierManagement = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please enter the phone number',
+                    message: "Please enter the phone number",
                   },
                 ]}
               >
-                <Input placeholder="Please enter phone number" allowClear/>
+                <Input placeholder="Please enter phone number" allowClear />
               </Form.Item>
             </Col>
           </Row>
@@ -292,7 +338,10 @@ const SupplierManagement = () => {
       </Drawer>
 
       {/* <Table columns={columns} dataSource={supplierData} /> */}
-      <Table columns={columns} dataSource={Array.isArray(supplierData) ? supplierData : []} />
+      <Table
+        columns={columns}
+        dataSource={Array.isArray(supplierData) ? supplierData : []}
+      />
 
       <ToastContainer />
     </>
