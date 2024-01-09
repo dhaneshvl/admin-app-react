@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button, theme } from "antd";
+import { Layout, Menu, Button, theme, message } from "antd";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -9,6 +9,7 @@ import {
   ShoppingCartOutlined,
   ContainerOutlined,
   HeartTwoTone,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Dashboard from "./components/dashboard";
@@ -19,7 +20,8 @@ import SupplierManagement from "./components/suppliermanagement";
 import Login from "./components/Login";
 import PageNotFound from "./components/PageNotFound";
 import PurchaseEntry from "./components/PurchaseEntry";
-
+import PrivateRoutes from "./Utils/PrivateRoutes";
+import { useNavigate } from "react-router-dom";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -29,11 +31,19 @@ const AppLayout = ({ children }) => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.setItem("loggedIn", false);
+    message.success("Logged out successfully!");
+    navigate("/login");
+  };
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       {/* Sidebar */}
       <Sider trigger={null} collapsible collapsed={collapsed}>
-      {/* <Avatar src={url}  NewCityTraders size={50} shape="square" style={{ marginLeft:60 }}/> */}
+        {/* <Avatar src={url}  NewCityTraders size={50} shape="square" style={{ marginLeft:60 }}/> */}
         <div className="demo-logo-vertical" />
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
           <Menu.Item key="1" icon={<AreaChartOutlined />}>
@@ -55,14 +65,6 @@ const AppLayout = ({ children }) => {
             <Link to="/purchase-entry">Purchase Entry</Link>
           </Menu.Item>
         </Menu>
-
-        {/* <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} items={[
-  { key: '1', icon: <AreaChartOutlined />, children: <Link to="/">Dashboard</Link> },
-  { key: '2', icon: <UserOutlined />, children: <Link to="/user">User</Link> },
-  { key: '3', icon: <AreaChartOutlined />, children: <Link to="/store">Store</Link> },
-  { key: '4', icon: <AreaChartOutlined />, children: <Link to="/category">Category</Link> },
-  { key: '5', icon: <AreaChartOutlined />, children: <Link to="/product">Product</Link> },
-]} /> */}
       </Sider>
 
       <Layout className="site-layout">
@@ -72,6 +74,9 @@ const AppLayout = ({ children }) => {
           style={{
             padding: 0,
             background: colorBgContainer,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <Button
@@ -84,6 +89,22 @@ const AppLayout = ({ children }) => {
               height: 64,
             }}
           />
+
+          {/* Spacer to push the logout button to the right corner */}
+          <div style={{ flex: 1 }} />
+
+          {/* Logout Button */}
+          <Button
+            type="text"
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+            style={{
+              fontSize: "16px",
+              marginRight: 16,
+            }}
+          >
+            Logout
+          </Button>
         </Header>
 
         {/* Content */}
@@ -114,61 +135,79 @@ const AppLayout = ({ children }) => {
 };
 
 const App = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const handleLoginSuccess = (status) => {
+    setLoggedIn(status);
+  };
+
   return (
     <Router>
       <Routes>
+        <Route element={<PrivateRoutes loggedIn={loggedIn} />}>
+          <Route
+            path="/dashboard"
+            element={
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            }
+            exact
+          />
+          <Route
+            path="/"
+            element={
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <AppLayout>
+                <UserManagement />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/vendor"
+            element={
+              <AppLayout>
+                <Vendor />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/supplier"
+            element={
+              <AppLayout>
+                <SupplierManagement />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/product"
+            element={
+              <AppLayout>
+                <ProductManagement />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/purchase-entry"
+            element={
+              <AppLayout>
+                <PurchaseEntry />
+              </AppLayout>
+            }
+          />
+        </Route>
         <Route
-          path="/dashboard"
-          element={
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
-          }
+          element={<Login onLoginSuccess={handleLoginSuccess} />}
+          path="/login"
         />
-        <Route path="/login" element={<Login />} />{" "}
-        <Route path="/" element={<Login />} />{" "}
-        {/* Separate route for Login */}
-        <Route
-          path="/user"
-          element={
-            <AppLayout>
-              <UserManagement />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/vendor"
-          element={
-            <AppLayout>
-              <Vendor />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/supplier"
-          element={
-            <AppLayout>
-              <SupplierManagement />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/product"
-          element={
-            <AppLayout>
-              <ProductManagement />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/purchase-entry"
-          element={
-            <AppLayout>
-              <PurchaseEntry />
-            </AppLayout>
-          }
-        />
-      <Route path="*" element={<PageNotFound/>} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );
