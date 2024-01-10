@@ -29,7 +29,7 @@ const SupplierManagement = () => {
   const [form] = Form.useForm();
   const [deleteSupplierId, setDeleteSupplierId] = useState(null);
 
-  const HOSTNAME = 'http://localhost:9090/api/v1';
+  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
 
   useEffect(() => {
     fetchData();

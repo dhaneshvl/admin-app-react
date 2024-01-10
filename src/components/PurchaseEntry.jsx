@@ -36,7 +36,7 @@ const PurchaseEntry = () => {
   const [isViewMode, setViewMode] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const HOSTNAME = 'http://localhost:9090/api/v1';
+  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
 
   useEffect(() => {
     const handleResize = () => {
