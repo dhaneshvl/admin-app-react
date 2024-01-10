@@ -19,13 +19,15 @@ const Vendor = () => {
   const [form] = Form.useForm();
   const [deleteVendorId, setDeleteVendorId] = useState(null);
 
+  const HOSTNAME = 'http://localhost:9090/api/v1';
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/vendor');
+      const response = await fetch(HOSTNAME+'/vendor');
       const result = await response.json();
 
       if (result.success) {
@@ -61,10 +63,10 @@ const Vendor = () => {
 
           if (selectedVendor === null) {
             // If selectedVendor is null, it's a create operation (POST request)
-            response = await axios.post('http://localhost:9090/api/v1/vendor/onboard', values);
+            response = await axios.post(HOSTNAME+'/vendor/onboard', values);
           } else {
             // If selectedStore is not null, it's an edit operation (PUT request)
-            response = await axios.put(`http://localhost:9090/api/v1/vendor/${selectedVendor.id}`, values);
+            response = await axios.put(HOSTNAME+`/vendor/${selectedVendor.id}`, values);
           }
 
           const responseData = response.data;
@@ -121,7 +123,7 @@ const Vendor = () => {
 
   const fetchVendorDetails = async (vendorId) => {
     try {
-      const response = await axios.get(`http://localhost:9090/api/v1/vendor/${vendorId}`);
+      const response = await axios.get(HOSTNAME+`/vendor/${vendorId}`);
       const vendorDetails = response.data.data; // Access the 'data' property
 
       console.log('vendor-details:', vendorDetails);
@@ -164,7 +166,7 @@ const Vendor = () => {
 
   const handleConfirmDelete = async (vendorId) => { // Receive vendorId as a parameter
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/vendor/${vendorId}`);
+      const response = await axios.delete(HOSTNAME+`/vendor/${vendorId}`);
       if (response.data.success) {
         toast.success(response.data.message, { position: 'bottom-left' });
         fetchData();

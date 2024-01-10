@@ -1,0 +1,54 @@
+/* Default styles for all devices */
+.logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* .company-name {
+    margin-left: -10px;
+  } */
+  
+  /* Media query for mobile devices */
+  @media only screen and (max-width: 768px) {
+    .logo-container {
+      justify-content: center; /* Adjust styles for mobile devices */
+    }
+  
+    .company-name {
+      margin-left: 0; /* Resetting the margin for mobile devices */
+    }
+  
+    /* Additional styles for mobile devices */
+  }
+  
+  /* Media query for tablets */
+  @media only screen and (min-width: 769px) and (max-width: 1024px) {
+    .logo-container {
+      /* Adjust styles for tablets */
+      padding: 7px;
+    }
+  
+    .company-name {
+      /* Additional styles for tablets */
+      font-size: 12px;
+    }
+  }
+  
+  /* Media query for laptops and larger screens */
+  @media only screen and (min-width: 1025px) {
+    .logo-container {
+      /* Adjust styles for laptops and larger screens */
+      padding: 10px;
+    }
+  
+    .company-name {
+      /* Additional styles for laptops and larger screens */
+      font-size: 15px;
+    }
+  }
+  
+  /* Media query for when the sidebar is collapsed */
+  .sidebar-collapsed .company-name {
+    display: none;
+  }
+  

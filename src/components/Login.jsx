@@ -9,6 +9,8 @@ const Login = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const HOSTNAME = 'http://localhost:9090/api/v1';
+
   useEffect(() => {
     // Check if the user is already logged in
     if (sessionStorage.getItem("loggedIn") === "true") {
@@ -21,7 +23,7 @@ const Login = ({ onLoginSuccess }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:9090/api/v1/login",
+        HOSTNAME+"/login",
         values,
         {
           timeout: 15000, // 15 seconds for the overall request timeout

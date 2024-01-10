@@ -17,13 +17,15 @@ const UserManagement = () => {
   const [form] = Form.useForm();
   const [deleteUserId, setDeleteUserId] = useState(null);
 
+  const HOSTNAME = 'http://localhost:9090/api/v1';
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/user');
+      const response = await fetch(HOSTNAME+'/user');
       const result = await response.json();
 
       if (result.success) {
@@ -59,10 +61,10 @@ const UserManagement = () => {
 
           if (selectedUser === null) {
             // If selectedUser is null, it's a create operation (POST request)
-            response = await axios.post('http://localhost:9090/api/v1/user/onboard', values);
+            response = await axios.post(HOSTNAME+'/user/onboard', values);
           } else {
             // If selectedUser is not null, it's an edit operation (PUT request)
-            response = await axios.put(`http://localhost:9090/api/v1/user/${selectedUser.id}`, values);
+            response = await axios.put(HOSTNAME+`/user/${selectedUser.id}`, values);
           }
 
           const responseData = response.data;
@@ -116,7 +118,7 @@ const UserManagement = () => {
 
   const fetchUserDetails = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:9090/api/v1/user/${userId}`);
+      const response = await axios.get(HOSTNAME+`/user/${userId}`);
       const userDetails = response.data.data; // Access the 'data' property
 
       console.log('user-details:', userDetails);
@@ -157,7 +159,7 @@ const UserManagement = () => {
 
   const handleConfirmDelete = async (userId) => { // Receive userId as a parameter
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/user/${userId}`);
+      const response = await axios.delete(HOSTNAME+`/user/${userId}`);
       if (response.data.success) {
         toast.success(response.data.message, { position: 'bottom-left' });
         fetchData();

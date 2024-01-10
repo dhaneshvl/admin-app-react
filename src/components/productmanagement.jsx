@@ -17,6 +17,8 @@ const ProductManagement = () => {
   const [deleteProductId, setDeleteProductId] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
 
+  const HOSTNAME = 'http://localhost:9090/api/v1';
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -27,7 +29,7 @@ const ProductManagement = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/product');
+      const response = await fetch(HOSTNAME+'/product');
       const result = await response.json();
 
       console.log('API Response:', result); // Log API response
@@ -54,7 +56,7 @@ const ProductManagement = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/supplier');
+      const response = await fetch(HOSTNAME+'/supplier');
       const result = await response.json();
 
       if (result.success) {
@@ -87,9 +89,9 @@ const ProductManagement = () => {
           let response;
 
           if (selectedProduct === null) {
-            response = await axios.post('http://localhost:9090/api/v1/product/create', values);
+            response = await axios.post(HOSTNAME+'/product/create', values);
           } else {
-            response = await axios.put(`http://localhost:9090/api/v1/product/${selectedProduct.id}`, values);
+            response = await axios.put(HOSTNAME+`/product/${selectedProduct.id}`, values);
           }
 
           const responseData = response.data;
@@ -136,7 +138,7 @@ const ProductManagement = () => {
 
   const fetchProductDetails = async (productId) => {
     try {
-      const response = await axios.get(`http://localhost:9090/api/v1/product/${productId}`);
+      const response = await axios.get(HOSTNAME+`/product/${productId}`);
       const productDetails = response.data.data;
 
       console.log('Product Details:', productDetails);
@@ -178,7 +180,7 @@ const ProductManagement = () => {
 
   const handleConfirmDelete = async (productId) => {
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/product/${productId}`);
+      const response = await axios.delete(HOSTNAME+`/product/${productId}`);
       if (response.data.success) {
         toast.success(response.data.message, { position: 'bottom-left' });
         fetchData();

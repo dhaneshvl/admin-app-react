@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button, theme, message } from "antd";
+import { Layout, Menu, Button, theme, message, Avatar } from "antd";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -10,6 +10,7 @@ import {
   ContainerOutlined,
   HeartTwoTone,
   LogoutOutlined,
+  AntDesignOutlined
 } from "@ant-design/icons";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Dashboard from "./components/dashboard";
@@ -22,6 +23,7 @@ import PageNotFound from "./components/PageNotFound";
 import PurchaseEntry from "./components/PurchaseEntry";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { useNavigate } from "react-router-dom";
+import './App.css';
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -46,6 +48,23 @@ const AppLayout = ({ children }) => {
         {/* <Avatar src={url}  NewCityTraders size={50} shape="square" style={{ marginLeft:60 }}/> */}
         <div className="demo-logo-vertical" />
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+        <div className={`logo-container ${collapsed ? 'sidebar-collapsed' : ''}`}>
+      {/* Display the Avatar with different sizes based on screen breakpoints */}
+      <Avatar className="ant-avatar"
+        size={{
+          xs: 24,
+          sm: 32,
+          md: 40,
+          lg: 64,
+          xl: 80,
+          xxl: 100,
+        }}
+        icon={<AntDesignOutlined />}
+      />
+      
+      {/* Display the company name (NewCityTraders) */}
+      {/* <span className="company-name">NewCityTraders</span> */}
+    </div>
           <Menu.Item key="1" icon={<AreaChartOutlined />}>
             <Link to="/dashboard">Dashboard</Link>
           </Menu.Item>

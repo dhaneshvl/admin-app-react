@@ -36,6 +36,8 @@ const PurchaseEntry = () => {
   const [isViewMode, setViewMode] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  const HOSTNAME = 'http://localhost:9090/api/v1';
+
   useEffect(() => {
     const handleResize = () => {
       // Update the isMobile state based on the window width
@@ -58,7 +60,7 @@ const PurchaseEntry = () => {
     const fetchSuppliers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9090/api/v1/supplier"
+          HOSTNAME+"/supplier"
         );
         setSuppliers(response.data.data);
       } catch (error) {
@@ -73,7 +75,7 @@ const PurchaseEntry = () => {
     const fetchPurchaseEntries = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9090/api/v1/purchase-entries"
+          HOSTNAME+ "/purchase-entries"
         );
         setPurchaseEntries(response.data.data);
       } catch (error) {
@@ -89,7 +91,7 @@ const PurchaseEntry = () => {
       if (selectedSupplier) {
         try {
           const response = await axios.get(
-            `http://localhost:9090/api/v1/product/supplier/${selectedSupplier}`
+            HOSTNAME+`/product/supplier/${selectedSupplier}`
           );
           setProducts(response.data.data);
         } catch (error) {
@@ -120,7 +122,7 @@ const PurchaseEntry = () => {
     try {
       setViewMode(true); // Show loader on form submit
       const response = await axios.get(
-        `http://localhost:9090/api/v1/purchase-entries/${record.purchaseEntryId}`
+        HOSTNAME+`/purchase-entries/${record.purchaseEntryId}`
       );
 
       const responseData = response.data;
@@ -206,7 +208,7 @@ const PurchaseEntry = () => {
       console.log("Received values:", JSON.stringify(submissionData));
 
       const response = await axios.post(
-        "http://localhost:9090/api/v1/purchase-entries",
+        HOSTNAME+"/purchase-entries",
         submissionData
       );
 
@@ -223,7 +225,7 @@ const PurchaseEntry = () => {
 
         // Fetch updated purchase entries
         const updatedResponse = await axios.get(
-          "http://localhost:9090/api/v1/purchase-entries"
+          HOSTNAME+"/purchase-entries"
         );
         setPurchaseEntries(updatedResponse.data.data);
       } else {

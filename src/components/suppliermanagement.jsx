@@ -29,13 +29,15 @@ const SupplierManagement = () => {
   const [form] = Form.useForm();
   const [deleteSupplierId, setDeleteSupplierId] = useState(null);
 
+  const HOSTNAME = 'http://localhost:9090/api/v1';
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:9090/api/v1/supplier");
+      const response = await fetch(HOSTNAME+"/supplier");
       const result = await response.json();
 
       if (result.success) {
@@ -72,13 +74,13 @@ const SupplierManagement = () => {
           if (selectedSupplier === null) {
             // If selectedSupplier is null, it's a create operation (POST request)
             response = await axios.post(
-              "http://localhost:9090/api/v1/supplier/create",
+              HOSTNAME+"/supplier/create",
               values
             );
           } else {
             // If selectedSupplier is not null, it's an edit operation (PUT request)
             response = await axios.put(
-              `http://localhost:9090/api/v1/supplier/${selectedSupplier.id}`,
+              HOSTNAME+`/supplier/${selectedSupplier.id}`,
               values
             );
           }
@@ -142,7 +144,7 @@ const SupplierManagement = () => {
   const fetchSupplierDetails = async (supplierId) => {
     try {
       const response = await axios.get(
-        `http://localhost:9090/api/v1/supplier/${supplierId}`
+        HOSTNAME+`/supplier/${supplierId}`
       );
       const supplierDetails = response.data.data;
 
@@ -181,7 +183,7 @@ const SupplierManagement = () => {
   const handleConfirmDelete = async (supplierId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:9090/api/v1/supplier/${supplierId}`
+        HOSTNAME+`/supplier/${supplierId}`
       );
       if (response.data.success) {
         toast.success(response.data.message, { position: "bottom-left" });
