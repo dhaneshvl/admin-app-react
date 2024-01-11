@@ -36,7 +36,7 @@ const PurchaseEntry = () => {
   const [isViewMode, setViewMode] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
+  const HOSTNAME = 'http://localhost:9090/api/v1';
 
   useEffect(() => {
     const handleResize = () => {
@@ -177,6 +177,7 @@ const PurchaseEntry = () => {
   const closeDrawer = () => {
     form.resetFields(); // Reset the entire form
     setSelectedSupplier(null);
+    setProducts(null);
     setIsDrawerVisible(false);
     setViewMode(false);
   };
@@ -246,11 +247,11 @@ const PurchaseEntry = () => {
   };
 
   const columns = [
-    {
-      title: "Purchase ID",
-      dataIndex: "purchaseEntryId",
-      key: "purchaseEntryId",
-    },
+    // {
+    //   title: "Purchase ID",
+    //   dataIndex: "purchaseEntryId",
+    //   key: "purchaseEntryId",
+    // },
     {
       title: "Purchase Note",
       dataIndex: "purchaseNote",
@@ -398,11 +399,18 @@ const PurchaseEntry = () => {
                         optionFilterProp="children"
                         disabled={isViewMode}
                       >
-                        {products.map((product) => (
+                        {/* {products.map((product) => (
                           <Option key={product.id} value={product.id}>
                             {product.productName}
                           </Option>
-                        ))}
+                        ))} */}
+
+{products?.length > 0 && products.map((product) => (
+  <Option key={product.id} value={product.id}>
+    {product.productName}
+  </Option>
+))}
+
                       </Select>
                       {/* </Tooltip> */}
                     </Form.Item>

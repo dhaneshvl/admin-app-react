@@ -17,7 +17,7 @@ const ProductManagement = () => {
   const [deleteProductId, setDeleteProductId] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
 
-  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
+  const HOSTNAME = 'http://localhost:9090/api/v1';
 
   useEffect(() => {
     fetchData();
@@ -206,16 +206,16 @@ const ProductManagement = () => {
       dataIndex: 'supplierName',
       key: 'supplierName',
     },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
-    },
-    {
-      title: 'Discount (%)',
-      dataIndex: 'discount',
-      key: 'discount',
-    },
+    // {
+    //   title: 'Price',
+    //   dataIndex: 'price',
+    //   key: 'price',
+    // },
+    // {
+    //   title: 'Discount (%)',
+    //   dataIndex: 'discount',
+    //   key: 'discount',
+    // },
     {
       title: 'Added Date',
       dataIndex: 'addedDate',

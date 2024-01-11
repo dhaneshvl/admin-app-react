@@ -29,7 +29,7 @@ const SupplierManagement = () => {
   const [form] = Form.useForm();
   const [deleteSupplierId, setDeleteSupplierId] = useState(null);
 
-  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
+  const HOSTNAME = 'http://localhost:9090/api/v1';
 
   useEffect(() => {
     fetchData();
@@ -205,16 +205,16 @@ const SupplierManagement = () => {
       key: "supplierName",
       render: (text) => <a>{text}</a>,
     },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "GST Number",
-      dataIndex: "gstNo",
-      key: "gstNo",
-    },
+    // {
+    //   title: "Address",
+    //   dataIndex: "address",
+    //   key: "address",
+    // },
+    // {
+    //   title: "GST Number",
+    //   dataIndex: "gstNo",
+    //   key: "gstNo",
+    // },
     {
       title: "Phone",
       dataIndex: "phone",

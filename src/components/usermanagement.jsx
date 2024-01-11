@@ -17,7 +17,7 @@ const UserManagement = () => {
   const [form] = Form.useForm();
   const [deleteUserId, setDeleteUserId] = useState(null);
 
-  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
+  const HOSTNAME = 'http://localhost:9090/api/v1';
 
   useEffect(() => {
     fetchData();
@@ -185,16 +185,16 @@ const UserManagement = () => {
       dataIndex: 'username',
       key: 'username',
     },
-    {
-      title: 'Phone',
-      dataIndex: 'phone',
-      key: 'phone',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
+    // {
+    //   title: 'Phone',
+    //   dataIndex: 'phone',
+    //   key: 'phone',
+    // },
+    // {
+    //   title: 'Email',
+    //   dataIndex: 'email',
+    //   key: 'email',
+    // },
     {
       title: 'User Type',
       dataIndex: 'userType', // Assuming userType is the field for User Type

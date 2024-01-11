@@ -96,3 +96,15 @@
       max-width: 100%;
     }
   }
+
+  .login-box {
+    /* Your existing styles */
+  
+    /* Additional styles for responsiveness */
+    @media only screen and (max-width: 768px) {
+      .illustration-wrapper {
+        display: none; /* Hide the illustration on screens smaller than 768px */
+      }
+    }
+  }
+  

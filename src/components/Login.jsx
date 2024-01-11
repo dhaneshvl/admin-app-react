@@ -9,7 +9,7 @@ const Login = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
+  const HOSTNAME = 'http://localhost:9090/api/v1';
 
   useEffect(() => {
     // Check if the user is already logged in

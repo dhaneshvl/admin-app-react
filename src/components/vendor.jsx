@@ -19,7 +19,7 @@ const Vendor = () => {
   const [form] = Form.useForm();
   const [deleteVendorId, setDeleteVendorId] = useState(null);
 
-  const HOSTNAME = 'http://54.172.116.149:9090/api/v1';
+  const HOSTNAME = 'http://localhost:9090/api/v1';
 
   useEffect(() => {
     fetchData();
@@ -197,26 +197,26 @@ const Vendor = () => {
       dataIndex: 'addedDate',
       key: 'addedDate',
     },
-    {
-      title: 'GST NO',
-      dataIndex: 'gstNo',
-      key: 'gstBo',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Pincode',
-      dataIndex: 'pincode',
-      key: 'pincode',
-    },
-    {
-      title: 'Phone',
-      dataIndex: 'phone',
-      key: 'phone',
-    },
+    // {
+    //   title: 'GST NO',
+    //   dataIndex: 'gstNo',
+    //   key: 'gstBo',
+    // },
+    // {
+    //   title: 'Address',
+    //   dataIndex: 'address',
+    //   key: 'address',
+    // },
+    // {
+    //   title: 'Pincode',
+    //   dataIndex: 'pincode',
+    //   key: 'pincode',
+    // },
+    // {
+    //   title: 'Phone',
+    //   dataIndex: 'phone',
+    //   key: 'phone',
+    // },
     {
       title: 'Action',
       key: 'action',
