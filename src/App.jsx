@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {message } from 'antd';
+import { message } from "antd";
 import { CssBaseline, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -19,13 +19,13 @@ import PageNotFound from "./components/PageNotFound";
 import PurchaseEntry from "./components/PurchaseEntry";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { useNavigate } from "react-router-dom";
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import logo from './images/bird-script-icon.png'; 
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import logo from "./images/bird-script-icon.png";
+import { Divider } from "@mui/material";
 import "./App.css";
 
 import {
@@ -69,8 +69,7 @@ const AppLayout = ({ children }) => {
     setMobileOpen(false);
   };
 
-  console.log('isclosing: '+isClosing);
-  console.log('mobileOpen: '+mobileOpen);
+  const [temporaryDrawerZIndex, setTemporaryDrawerZIndex] = useState(0);
 
   const handleDrawerTransitionEnd = () => {
     setIsClosing(false);
@@ -147,26 +146,30 @@ const AppLayout = ({ children }) => {
             <MenuIcon />
           </MuiIconButton>
           <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <img
-  src={logo}
-  alt="Logo"
-  style={{ marginLeft :-18,marginRight: 3, width: "auto", height: 30 }}
-/>
-<MuiTypography
-  variant="h6"
-  noWrap
-  component="div"
-  sx={{ fontFamily: 'Helvetica Neue' }}
->
-  NewCityTraders
-</MuiTypography>
-
-        </div>
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              style={{
+                marginLeft: -18,
+                marginRight: 3,
+                width: "auto",
+                height: 30,
+              }}
+            />
+            <MuiTypography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ fontFamily: "Helvetica Neue" }}
+            >
+              NewCityTraders
+            </MuiTypography>
+          </div>
           <Toolbar>
             <div>
               <IconButton
@@ -183,13 +186,13 @@ const AppLayout = ({ children }) => {
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
@@ -198,8 +201,7 @@ const AppLayout = ({ children }) => {
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
-         
-        </Toolbar>
+          </Toolbar>
         </MuiToolbar>
       </MuiAppBar>
       <MuiDrawer
@@ -209,26 +211,33 @@ const AppLayout = ({ children }) => {
         onClose={handleDrawerClose}
         ModalProps={{
           keepMounted: true,
+          style: { zIndex: temporaryDrawerZIndex }, // Set zIndex dynamically
         }}
         sx={{
           display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth ,
-        marginRight: 0, // Updated based on your requirement
-        },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+            marginRight: 0, // Updated based on your requirement
+            marginTop: appBarWidth - 1,
+          },
         }}
       >
         <MuiList>
           {menuItems.map((item, index) => (
-            <MuiListItemButton
-              key={item.text}
-              onClick={() => navigate(item.path)}
-              sx={{ paddingLeft: 2, paddingRight: 2 }}
-            >
-              <MuiListItemIcon sx={{ minWidth: "auto", marginRight: 1 }}>
-                {item.icon}
-              </MuiListItemIcon>
-              <MuiListItemText primary={item.text} />
-            </MuiListItemButton>
+            <React.Fragment key={item.text}>
+              <MuiListItemButton
+                key={item.text}
+                onClick={() => navigate(item.path)}
+                sx={{ paddingLeft: 2, paddingRight: 2 }}
+              >
+                <MuiListItemIcon sx={{ minWidth: "auto", marginRight: 1 }}>
+                  {item.icon}
+                </MuiListItemIcon>
+                <MuiListItemText primary={item.text} sx={{ fontFamily: "Helvetica Neue" }}/>
+              </MuiListItemButton>
+              {index < menuItems.length - 1 && <Divider />}
+            </React.Fragment>
           ))}
         </MuiList>
       </MuiDrawer>
@@ -236,34 +245,39 @@ const AppLayout = ({ children }) => {
         variant="permanent"
         sx={{
           display: { xs: "none", sm: "block" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth 
-          ,marginTop: appBarWidth,
-        },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+            marginTop: appBarWidth - 1,
+            zIndex: 1, // Set zIndex higher than temporary drawer
+          },
         }}
         open
       >
         <MuiList>
-  {menuItems.map((item, index) => (
-    <MuiListItemButton
-      key={item.text}
-      onClick={() => navigate(item.path)}
-      sx={{ paddingLeft: 2, paddingRight: 2 }}
-    >
-      <MuiListItemIcon sx={{ minWidth: 'auto', marginRight: 1 }}>
-        {item.icon}
-      </MuiListItemIcon>
-      <MuiListItemText primary={item.text} />
-    </MuiListItemButton>
-  ))}
-</MuiList>
-
+          {menuItems.map((item, index) => (
+            <React.Fragment key={item.text}>
+              <MuiListItemButton
+                key={item.text}
+                onClick={() => navigate(item.path)}
+                sx={{ paddingLeft: 2, paddingRight: 2 }}
+              >
+                <MuiListItemIcon sx={{ minWidth: "auto", marginRight: 1 }}>
+                  {item.icon}
+                </MuiListItemIcon>
+                <MuiListItemText primary={item.text} sx={{ fontFamily: "Helvetica Neue" }}/>
+              </MuiListItemButton>
+              {index < menuItems.length - 1 && <Divider />}
+            </React.Fragment>
+          ))}
+        </MuiList>
       </MuiDrawer>
       <MuiBox
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          marginLeft: drawerVariant === 'temporary' ? 0 : `${drawerWidth}px`,
+          marginLeft: drawerVariant === "temporary" ? 0 : `${drawerWidth}px`,
           // marginLeft:0
         }}
       >
@@ -354,4 +368,3 @@ const App = () => {
 };
 
 export default App;
-

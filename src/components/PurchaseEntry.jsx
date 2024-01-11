@@ -9,6 +9,8 @@ import {
   Row,
   Col,
   Table,
+  Card,
+  Tooltip,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -20,6 +22,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { grey, red } from "@mui/material/colors";
 
 const { Option } = Select;
 
@@ -36,7 +39,7 @@ const PurchaseEntry = () => {
   const [isViewMode, setViewMode] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const HOSTNAME = 'http://localhost:9090/api/v1';
+  const HOSTNAME = "http://localhost:9090/api/v1";
 
   useEffect(() => {
     const handleResize = () => {
@@ -59,9 +62,7 @@ const PurchaseEntry = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.get(
-          HOSTNAME+"/supplier"
-        );
+        const response = await axios.get(HOSTNAME + "/supplier");
         setSuppliers(response.data.data);
       } catch (error) {
         console.error("Error fetching suppliers:", error);
@@ -74,9 +75,7 @@ const PurchaseEntry = () => {
   useEffect(() => {
     const fetchPurchaseEntries = async () => {
       try {
-        const response = await axios.get(
-          HOSTNAME+ "/purchase-entries"
-        );
+        const response = await axios.get(HOSTNAME + "/purchase-entries");
         setPurchaseEntries(response.data.data);
       } catch (error) {
         console.error("Error fetching purchase entries:", error);
@@ -91,7 +90,7 @@ const PurchaseEntry = () => {
       if (selectedSupplier) {
         try {
           const response = await axios.get(
-            HOSTNAME+`/product/supplier/${selectedSupplier}`
+            HOSTNAME + `/product/supplier/${selectedSupplier}`
           );
           setProducts(response.data.data);
         } catch (error) {
@@ -122,7 +121,7 @@ const PurchaseEntry = () => {
     try {
       setViewMode(true); // Show loader on form submit
       const response = await axios.get(
-        HOSTNAME+`/purchase-entries/${record.purchaseEntryId}`
+        HOSTNAME + `/purchase-entries/${record.purchaseEntryId}`
       );
 
       const responseData = response.data;
@@ -209,7 +208,7 @@ const PurchaseEntry = () => {
       console.log("Received values:", JSON.stringify(submissionData));
 
       const response = await axios.post(
-        HOSTNAME+"/purchase-entries",
+        HOSTNAME + "/purchase-entries",
         submissionData
       );
 
@@ -225,9 +224,7 @@ const PurchaseEntry = () => {
         closeDrawer();
 
         // Fetch updated purchase entries
-        const updatedResponse = await axios.get(
-          HOSTNAME+"/purchase-entries"
-        );
+        const updatedResponse = await axios.get(HOSTNAME + "/purchase-entries");
         setPurchaseEntries(updatedResponse.data.data);
       } else {
         // Display error message using react-toastify
@@ -361,7 +358,7 @@ const PurchaseEntry = () => {
                   placeholder="Purchase Note"
                   allowClear
                   onChange={(e) => setPurchaseNote(e.target.value)}
-                  disabled={isViewMode}
+                  readOnly={isViewMode}
                 />
               </Form.Item>
             </Col>
@@ -371,126 +368,125 @@ const PurchaseEntry = () => {
             {(fields, { add, remove }) => (
               <>
                 {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
+                  <Card
+                    title="Purchase Item"
                     style={{
-                      display: "flex",
-                      marginBottom: isMobile ? 8 : 16,
-                      flexDirection: "row",
+                      width: "100%",
+                      background: "#fbb13c",
                     }}
-                    align={isMobile ? "start" : "baseline"}
+                    key={key}
                   >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "product"]}
-                      // label = "Select Product"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Missing product",
-                        },
-                      ]}
+                    <Space
+                      style={{
+                        display: "flex",
+                        marginBottom: isMobile ? 10 : 20,
+                        flexDirection: "row",
+                      }}
+                      align={isMobile ? "start" : "baseline"}
                     >
-                      {/* <Tooltip title="Product" key="product-tooltip"> */}
-                      <Select
-                        showSearch
-                        placeholder="Please select a product"
-                        allowClear
-                        optionFilterProp="children"
-                        disabled={isViewMode}
-                      >
-                        {/* {products.map((product) => (
-                          <Option key={product.id} value={product.id}>
-                            {product.productName}
-                          </Option>
-                        ))} */}
+                      <Row gutter={isMobile ? 8 : 16}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "product"]}
+                          label="Select Product"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing product",
+                            },
+                          ]}
+                        >
+                          <Select
+                            showSearch
+                            placeholder="Please select a product"
+                            allowClear
+                            optionFilterProp="children"
+                            disabled={isViewMode}
+                          >
+                            {products?.length > 0 &&
+                              products.map((product) => (
+                                <Option key={product.id} value={product.id}>
+                                  {product.productName}
+                                </Option>
+                              ))}
+                          </Select>
+                        </Form.Item>
 
-{products?.length > 0 && products.map((product) => (
-  <Option key={product.id} value={product.id}>
-    {product.productName}
-  </Option>
-))}
+                        <Form.Item
+                          {...restField}
+                          name={[name, "quantity"]}
+                          label="Product Quantity"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing quantity",
+                            },
+                          ]}
+                        >
+                          <Input
+                            placeholder="Quantity"
+                            allowClear
+                            readOnly={isViewMode}
+                          />
+                        </Form.Item>
 
-                      </Select>
-                      {/* </Tooltip> */}
-                    </Form.Item>
+                        {isViewMode ? (
+                          // <Row gutter={isMobile ? 8 : 16}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "totalAmount"]}
+                            label="Total"
+                          >
+                            <Input
+                              placeholder="Total of base price"
+                              allowClear
+                              readOnly={isViewMode}
+                            />
+                          </Form.Item>
+                        ) : // </Row>
+                        null}
+                      </Row>
+                      <Row gutter={isMobile ? 8 : 16}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "basePrice"]}
+                          label="Base Price"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing base price",
+                            },
+                          ]}
+                        >
+                          <Input
+                            placeholder="Base Price"
+                            allowClear
+                            readOnly={isViewMode}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "discount"]}
+                          label="Discount"
+                        >
+                          <Input
+                            placeholder="Discount (%)"
+                            allowClear
+                            readOnly={isViewMode}
+                          />
+                        </Form.Item>
+                      </Row>
 
-                    <Form.Item
-                      {...restField}
-                      name={[name, "quantity"]}
-                      label="Qty"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Missing quantity",
-                        },
-                      ]}
-                    >
-                      {/* <Tooltip title="Quantity" key="quantity-tooltip"> */}
-                      <Input
-                        placeholder="Quantity"
-                        allowClear
-                        disabled={isViewMode}
-                      />
-                      {/* </Tooltip> */}
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "basePrice"]}
-                      label="Base Price"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Missing base price",
-                        },
-                      ]}
-                    >
-                      {/* <Tooltip title="Base Price" key="base-price-tooltip"> */}
-                      <Input
-                        placeholder="Base Price"
-                        allowClear
-                        disabled={isViewMode}
-                      />
-                      {/* </Tooltip> */}
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "discount"]}
-                      label="Discount"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Missing discount",
-                      //   },
-                      // ]}
-                    >
-                      {/* <Tooltip title="Discount" key="discount-tooltip"> */}
-                      <Input
-                        placeholder="Discount (%)"
-                        allowClear
-                        disabled={isViewMode}
-                      />
-                      {/* </Tooltip> */}
-                    </Form.Item>
-
-                    {isViewMode ? (
-                      <Form.Item
-                        {...restField}
-                        name={[name, "totalAmount"]}
-                        label="Total"
-                      >
-                        <Input
-                          placeholder="Total"
-                          allowClear
-                          disabled={isViewMode}
-                        />
-                      </Form.Item>
-                    ) : null}
-
-                    {isViewMode ? null : (
-                      <MinusCircleOutlined onClick={() => remove(name)} />
-                    )}
-                  </Space>
+                      {isViewMode ? null : (
+                        <Tooltip title="remove item" key={name}>
+                          <MinusCircleOutlined
+                            color="red"
+                            onClick={() => remove(name)}
+                          />
+                        </Tooltip>
+                      )}
+                    </Space>
+                  </Card>
                 ))}
                 <Form.Item>
                   <Button
@@ -499,6 +495,7 @@ const PurchaseEntry = () => {
                     block
                     icon={<PlusOutlined />}
                     disabled={isViewMode}
+                    // readOnly={isViewMode}
                   >
                     Add more products
                   </Button>
@@ -513,6 +510,7 @@ const PurchaseEntry = () => {
               className="login-form-button"
               loading={submitLoading} // Show loader conditionally
               disabled={isViewMode}
+              // readOnly={isViewMode}
             >
               Submit
             </Button>
