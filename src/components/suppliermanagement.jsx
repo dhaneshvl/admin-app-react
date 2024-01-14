@@ -205,16 +205,6 @@ const SupplierManagement = () => {
       key: "supplierName",
       render: (text) => <a>{text}</a>,
     },
-    // {
-    //   title: "Address",
-    //   dataIndex: "address",
-    //   key: "address",
-    // },
-    // {
-    //   title: "GST Number",
-    //   dataIndex: "gstNo",
-    //   key: "gstNo",
-    // },
     {
       title: "Phone",
       dataIndex: "phone",
@@ -258,7 +248,7 @@ const SupplierManagement = () => {
         title={
           selectedSupplier !== null ? "Edit Supplier" : "Create a new Supplier"
         }
-        width={720}
+        width={600}
         onClose={onClose}
         open={open}
         extra={
@@ -275,7 +265,7 @@ const SupplierManagement = () => {
           </Space>
         }
       >
-        <Form form={form} layout="vertical">
+         <Form form={form} layout="vertical" size="small">
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

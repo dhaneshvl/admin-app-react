@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from "react";
 import {
   Select,
@@ -279,7 +282,7 @@ const PurchaseEntry = () => {
 
   return (
     <>
-      <h1 style={{ marginBlockStart: -20 }}>Purchase Entry Management</h1>
+      <h1 style={{ marginBlockStart: -20 }}>Purchase Management</h1>
 
       <Button
         type="primary"
@@ -296,7 +299,7 @@ const PurchaseEntry = () => {
 
       <Drawer
         title={isViewMode ? "View Purchase Entry" : "Add New Purchase Entry"}
-        width={isMobile ? "100%" : 900}
+        width={isMobile ? "100%" : 700}
         onClose={closeDrawer}
         open={isDrawerVisible}
         destroyOnClose={true} // Add this line to prevent destroying the drawer on close
@@ -304,13 +307,16 @@ const PurchaseEntry = () => {
         <Form
           form={form}
           name="dynamic_form_nest_item"
+          size="small"
           onFinish={onFinish}
           style={{
-            maxWidth: isMobile ? "100%" : 820,
+            maxWidth: isMobile ? "100%" : 690,
+            width: "100%", // Make sure the form takes 100% width of the container
+    margin: "auto", // Center the form on larger screens
           }}
           autoComplete="off"
         >
-          <Row gutter={isMobile ? 8 : 16}>
+          <Row gutter={isMobile ? 5 : 10}>
             <Col span={12}>
               <Form.Item
                 label="Select Supplier"
@@ -321,6 +327,7 @@ const PurchaseEntry = () => {
                     message: "Please select a supplier",
                   },
                 ]}
+                style={{ marginBottom: isMobile ? 10 : 15, width: '100%' }}
               >
                 <Select
                   showSearch
@@ -353,6 +360,7 @@ const PurchaseEntry = () => {
                     message: "Purchase note required",
                   },
                 ]}
+                style={{ marginBottom: isMobile ? 10 : 15, width: '100%' }}
               >
                 <Input
                   placeholder="Purchase Note"
@@ -369,10 +377,10 @@ const PurchaseEntry = () => {
               <>
                 {fields.map(({ key, name, ...restField }) => (
                   <Card
-                    title="Purchase Item"
+                    // title="Purchase Item"
                     style={{
                       width: "100%",
-                      background: "#fbb13c",
+                      background: "#ADDBE6",
                     }}
                     key={key}
                   >
@@ -384,17 +392,18 @@ const PurchaseEntry = () => {
                       }}
                       align={isMobile ? "start" : "baseline"}
                     >
-                      <Row gutter={isMobile ? 8 : 16}>
+                      <Row gutter={isMobile ? 5 : 0}>
                         <Form.Item
                           {...restField}
                           name={[name, "product"]}
-                          label="Select Product"
+                          label="Product"
                           rules={[
                             {
                               required: true,
                               message: "Missing product",
                             },
                           ]}
+                          style={{ marginBottom: isMobile ? 10 : 15, width: '100%' }}
                         >
                           <Select
                             showSearch
@@ -422,6 +431,7 @@ const PurchaseEntry = () => {
                               message: "Missing quantity",
                             },
                           ]}
+                          style={{marginBottom: isMobile ? 10 : isViewMode ?10: 0, width: '100%' }}
                         >
                           <Input
                             placeholder="Quantity"
@@ -436,6 +446,7 @@ const PurchaseEntry = () => {
                             {...restField}
                             name={[name, "totalAmount"]}
                             label="Total"
+                            style={{marginLeft: isMobile ? 3: 10 ,marginBottom: isMobile ? 0 : 0, width: '100%' }}
                           >
                             <Input
                               placeholder="Total of base price"
@@ -446,7 +457,7 @@ const PurchaseEntry = () => {
                         ) : // </Row>
                         null}
                       </Row>
-                      <Row gutter={isMobile ? 8 : 16}>
+                      <Row gutter={isMobile ? 5 : 0}>
                         <Form.Item
                           {...restField}
                           name={[name, "basePrice"]}
@@ -457,6 +468,7 @@ const PurchaseEntry = () => {
                               message: "Missing base price",
                             },
                           ]}
+                          style={{ marginBottom: isMobile ? 10 : 15, width: '100%' }}
                         >
                           <Input
                             placeholder="Base Price"
@@ -468,6 +480,7 @@ const PurchaseEntry = () => {
                           {...restField}
                           name={[name, "discount"]}
                           label="Discount"
+                          style={{marginLeft: isMobile ? 5: 10 ,marginBottom: isMobile ? 10 : isViewMode ?10: 0, width: '100%' }}
                         >
                           <Input
                             placeholder="Discount (%)"
@@ -526,3 +539,4 @@ const PurchaseEntry = () => {
 };
 
 export default PurchaseEntry;
+

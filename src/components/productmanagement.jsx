@@ -250,7 +250,7 @@ const ProductManagement = () => {
 
       <Drawer
         title={selectedProduct != null ? 'Edit Product' : 'Create a new product'}
-        width={720}
+        width={600}
         onClose={onClose}
         open={open}
         extra={
@@ -262,7 +262,7 @@ const ProductManagement = () => {
           </Space>
         }
       >
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" size="small">
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

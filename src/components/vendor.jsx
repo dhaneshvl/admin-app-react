@@ -244,7 +244,7 @@ const Vendor = () => {
 
       <Drawer
         title={selectedVendor!=null? 'Edit Vendor' : 'Create a new vendor'}
-        width={720}
+        width={600}
         onClose={onClose}
         open={open} 
         extra={
@@ -256,7 +256,7 @@ const Vendor = () => {
           </Space>
         }
       >
-        <Form form={form} layout="vertical">
+         <Form form={form} layout="vertical" size="small">
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

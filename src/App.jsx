@@ -7,6 +7,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import StoreIcon from "@mui/icons-material/Store";
 import FactoryIcon from "@mui/icons-material/Factory";
+import VehicleIcon from '@mui/icons-material/AirportShuttle';
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/dashboard";
@@ -40,6 +41,7 @@ import {
   IconButton as MuiIconButton,
   Box as MuiBox,
 } from "@mui/material";
+import VehicleManagement from "./components/VehicleManagement";
 
 const drawerWidth = 195;
 const appBarWidth = 8; // Assuming sm breakpoint is suitable for your design
@@ -108,6 +110,11 @@ const AppLayout = ({ children }) => {
       text: "Product",
       icon: <ProductionQuantityLimitsIcon color="primary" />,
       path: "/product",
+    },
+    {
+      text: "Vehicle",
+      icon: <VehicleIcon color="primary" />,
+      path: "/vehicle",
     },
     {
       text: "Purchase Entry",
@@ -345,6 +352,14 @@ const App = () => {
             element={
               <AppLayout>
                 <ProductManagement />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/vehicle"
+            element={
+              <AppLayout>
+                <VehicleManagement />
               </AppLayout>
             }
           />
